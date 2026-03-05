@@ -27,31 +27,31 @@ jobs:
     steps:
       -
         name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           ref: ${{ github.event.inputs.commit_hash }}
       -
         name: Set up QEMU
-        uses: docker/setup-qemu-action@v3
+        uses: docker/setup-qemu-action@v4
       -
         name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
+        uses: docker/setup-buildx-action@v4
       -
         name: Login to Docker Hub
-        uses: docker/login-action@v3
+        uses: docker/login-action@v4
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
       -
         name: Build and push
-        uses: docker/build-push-action@v5
+        uses: docker/build-push-action@v6
         with:
           context: .
           push: true
           tags: litellm/litellm:${{ github.event.inputs.tag || 'latest' }} 
       -
         name: Build and push litellm-database image
-        uses: docker/build-push-action@v5
+        uses: docker/build-push-action@v6
         with:
           context: .
           push: true
@@ -59,7 +59,7 @@ jobs:
           tags: litellm/litellm-database:${{ github.event.inputs.tag || 'latest' }}
       -
         name: Build and push litellm-spend-logs image
-        uses: docker/build-push-action@v5
+        uses: docker/build-push-action@v6
         with:
           context: .
           push: true
@@ -75,12 +75,12 @@ jobs:
       #
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           ref: ${{ github.event.inputs.commit_hash }}
       # Uses the `docker/login-action` action to log in to the Container registry registry using the account and password that will publish the packages. Once published, the packages are scoped to the account defined here.
       - name: Log in to the Container registry
-        uses: docker/login-action@65b78e6e13532edd9afa3aa52ac7964289d1a9c1
+        uses: docker/login-action@db14339dbc0a1f0b184157be94b23a2138122354
         with:
           registry: ${{ env.REGISTRY }}
           username: ${{ github.actor }}
@@ -88,19 +88,19 @@ jobs:
       # This step uses [docker/metadata-action](https://github.com/docker/metadata-action#about) to extract tags and labels that will be applied to the specified image. The `id` "meta" allows the output of this step to be referenced in a subsequent step. The `images` value provides the base name for the tags and labels.
       - name: Extract metadata (tags, labels) for Docker
         id: meta
-        uses: docker/metadata-action@9ec57ed1fcdbf14dcef7dfbe97b2010124a938b7
+        uses: docker/metadata-action@030e881283bb7a6894de51c315a6bfe6a94e05cf
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
       # Configure multi platform Docker builds
       - name: Set up QEMU
-        uses: docker/setup-qemu-action@e0e4588fad221d38ee467c0bffd91115366dc0c5
+        uses: docker/setup-qemu-action@72cd56508471caa31aa98bca67440b2dc2f355c0
       - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@edfb0fe6204400c56fbfd3feba3fe9ad1adfa345
+        uses: docker/setup-buildx-action@2ae358d897a79d8c08e086f833a3d537bc2dac22
       # This step uses the `docker/build-push-action` action to build the image, based on your repository's `Dockerfile`. If the build succeeds, it pushes the image to GitHub Packages.
       # It uses the `context` parameter to define the build's context as the set of files located in the specified path. For more information, see "[Usage](https://github.com/docker/build-push-action#usage)" in the README of the `docker/build-push-action` repository.
       # It uses the `tags` and `labels` parameters to tag and label the image with the output from the "meta" step.
       - name: Build and push Docker image
-        uses: docker/build-push-action@4976231911ebf5f32aad765192d35f942aa48cb8
+        uses: docker/build-push-action@7d03e66b5f24d6b390ab64b132795fd3ef4152c8
         with:
           context: .
           push: true
@@ -115,12 +115,12 @@ jobs:
       packages: write
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           ref: ${{ github.event.inputs.commit_hash }}
 
       - name: Log in to the Container registry
-        uses: docker/login-action@65b78e6e13532edd9afa3aa52ac7964289d1a9c1
+        uses: docker/login-action@db14339dbc0a1f0b184157be94b23a2138122354
         with:
           registry: ${{ env.REGISTRY }}
           username: ${{ github.actor }}
@@ -128,17 +128,17 @@ jobs:
 
       - name: Extract metadata (tags, labels) for database Dockerfile
         id: meta-database
-        uses: docker/metadata-action@9ec57ed1fcdbf14dcef7dfbe97b2010124a938b7
+        uses: docker/metadata-action@030e881283bb7a6894de51c315a6bfe6a94e05cf
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}-database
       # Configure multi platform Docker builds
       - name: Set up QEMU
-        uses: docker/setup-qemu-action@e0e4588fad221d38ee467c0bffd91115366dc0c5
+        uses: docker/setup-qemu-action@72cd56508471caa31aa98bca67440b2dc2f355c0
       - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@edfb0fe6204400c56fbfd3feba3fe9ad1adfa345
+        uses: docker/setup-buildx-action@2ae358d897a79d8c08e086f833a3d537bc2dac22
 
       - name: Build and push Database Docker image
-        uses: docker/build-push-action@f2a1d5e99d037542a71f64918e516c093c6f3fc4
+        uses: docker/build-push-action@7d03e66b5f24d6b390ab64b132795fd3ef4152c8
         with:
           context: .
           file: Dockerfile.database
@@ -154,12 +154,12 @@ jobs:
       packages: write
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           ref: ${{ github.event.inputs.commit_hash }}
 
       - name: Log in to the Container registry
-        uses: docker/login-action@65b78e6e13532edd9afa3aa52ac7964289d1a9c1
+        uses: docker/login-action@db14339dbc0a1f0b184157be94b23a2138122354
         with:
           registry: ${{ env.REGISTRY }}
           username: ${{ github.actor }}
@@ -167,17 +167,17 @@ jobs:
 
       - name: Extract metadata (tags, labels) for spend-logs Dockerfile
         id: meta-spend-logs
-        uses: docker/metadata-action@9ec57ed1fcdbf14dcef7dfbe97b2010124a938b7
+        uses: docker/metadata-action@030e881283bb7a6894de51c315a6bfe6a94e05cf
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}-spend_logs
       # Configure multi platform Docker builds
       - name: Set up QEMU
-        uses: docker/setup-qemu-action@e0e4588fad221d38ee467c0bffd91115366dc0c5
+        uses: docker/setup-qemu-action@72cd56508471caa31aa98bca67440b2dc2f355c0
       - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@edfb0fe6204400c56fbfd3feba3fe9ad1adfa345
+        uses: docker/setup-buildx-action@2ae358d897a79d8c08e086f833a3d537bc2dac22
 
       - name: Build and push Database Docker image
-        uses: docker/build-push-action@f2a1d5e99d037542a71f64918e516c093c6f3fc4
+        uses: docker/build-push-action@7d03e66b5f24d6b390ab64b132795fd3ef4152c8
         with:
           context: .
           file: ./litellm-js/spend-logs/Dockerfile
@@ -189,12 +189,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           ref: ${{ github.event.inputs.commit_hash }}
 
       - name: Log in to the Container registry
-        uses: docker/login-action@65b78e6e13532edd9afa3aa52ac7964289d1a9c1
+        uses: docker/login-action@db14339dbc0a1f0b184157be94b23a2138122354
         with:
           registry: ${{ env.REGISTRY }}
           username: ${{ github.actor }}
@@ -205,7 +205,7 @@ jobs:
           echo "REPO_OWNER=`echo ${{github.repository_owner}} | tr '[:upper:]' '[:lower:]'`" >>${GITHUB_ENV}
       - name: Get LiteLLM Latest Tag
         id: current_app_tag
-        uses: WyriHaximus/github-action-get-previous-tag@v1.3.0
+        uses: WyriHaximus/github-action-get-previous-tag@v2.0.0
 
       - name: Get last published chart version
         id: current_version
@@ -223,7 +223,7 @@ jobs:
       # Automatically update the helm chart version one "patch" level
       - name: Bump release version
         id: bump_version
-        uses: christian-draeger/increment-semantic-version@1.1.0
+        uses: christian-draeger/increment-semantic-version@1.2.3
         with:
           current-version: ${{ steps.current_version.outputs.current-version || '0.1.0' }}
           version-fragment: 'bug'
@@ -254,7 +254,7 @@ jobs:
       - name: Display release tag
         run: echo "RELEASE_TAG is $RELEASE_TAG"
       - name: "Create release"
-        uses: "actions/github-script@v6"
+        uses: "actions/github-script@v8"
         with:
           github-token: "${{ secrets.GITHUB_TOKEN }}"
           script: |
@@ -279,7 +279,7 @@ jobs:
             }
       - name: Fetch Release Notes
         id: release-notes
-        uses: actions/github-script@v6
+        uses: actions/github-script@v8
         with:
           github-token: "${{ secrets.GITHUB_TOKEN }}"
           script: |
